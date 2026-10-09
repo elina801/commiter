@@ -312,9 +312,12 @@ class GitWorkflowTests(unittest.TestCase):
                 return {"id": index + 1, "login": self.config.accounts[index].login}
             return {"full_name": "owner/project", "permissions": {"push": True}}
 
+        credentials = []
+
         def local_transport(repo, config, identity, *args):
             if args[0] == "push":
                 actors.append(identity.login)
+                credentials.append((identity.login, identity.token))
             return repo.run(*[str(remote) if value == config.url else value for value in args])
 
         output, error = io.StringIO(), io.StringIO()
@@ -323,8 +326,13 @@ class GitWorkflowTests(unittest.TestCase):
         self.assertEqual(error.getvalue(), "")
         self.assertIn("Published 6 commits", output.getvalue())
         self.assertNotIn("dotenv-secret", output.getvalue())
-        self.assertEqual(len(actors), 6)
+        self.assertEqual(Counter(actors), {"alice": 2, "bob": 2, "charlie": 2})
+        self.assertEqual(set(credentials), {("alice", "dotenv-secret-1"), ("bob", "dotenv-secret-2"), ("charlie", "dotenv-secret-3")})
         log = self.repo.run("log", "-6", "--format=%ae|%s").decode().splitlines()
+        remote_log = self.repo.run("--git-dir", str(remote), "log", "-6", "--format=%ae|%s", "refs/heads/main").decode().splitlines()
+        self.assertEqual(remote_log, log)
+        self.assertEqual(self.repo.run("--git-dir", str(remote), "rev-parse", "refs/heads/main^{tree}").strip(),
+                         self.repo.run("rev-parse", "HEAD^{tree}").strip())
         for row in log:
             email, message = row.split("|", 1)
             index = int(email.split("+", 1)[0]) - 1

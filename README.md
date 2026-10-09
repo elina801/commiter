@@ -70,6 +70,14 @@ After filling in `.env`, run:
 commiter "Message 1" "Message 2" "Message 3"
 ```
 
+With `COMMITER_PUSH=true` and `COMMITER_DRY_RUN=false`, this one command pushes **all three accounts' assigned work** to the configured GitHub repository and the clone's current branch:
+
+- Account 1's commits use `Message 1` and are pushed with `GITHUB_TOKEN_1`.
+- Account 2's commits use `Message 2` and are pushed with `GITHUB_TOKEN_2`.
+- Account 3's commits use `Message 3` and are pushed with `GITHUB_TOKEN_3`.
+
+The command reports success after every assigned commit has been published. If a push fails, rerun the same three messages to resume the remaining commits.
+
 The comma syntax also works:
 
 ```sh
