@@ -10,15 +10,18 @@ commiter "Build dashboard" "Add settings" "Update styles"
 
 ## Install
 
-Requires Python 3.11+ and Git. `python-dotenv` is installed automatically.
+Requires Python 3.11+ and Git. The first option also requires [uv](https://docs.astral.sh/uv/getting-started/installation/). `python-dotenv` is installed automatically.
+
+Clone [elina801/commiter](https://github.com/elina801/commiter), then install the CLI:
 
 ```sh
-cd /Users/gauravphuyal/Dev/commiter
-uv tool install --editable .
+git clone https://github.com/elina801/commiter.git
+cd commiter
+uv tool install .
 commiter --help
 ```
 
-Or install into a virtual environment:
+Or, from the cloned `commiter` folder, install into a virtual environment:
 
 ```sh
 python3 -m venv .venv
@@ -28,11 +31,17 @@ python3 -m venv .venv
 
 ## Configure once
 
-Fill in the included `.env`, or copy `.env.example` to `.env` in the directory where you want to run the command. Commiter uses the nearest `.env` in the current directory or its parents. Relative paths are resolved from that file's directory. Settings in `.env` are authoritative, including tokens, even if your shell has different values.
+Create your local settings file from the template included in the repository:
+
+```sh
+cp .env.example .env
+```
+
+Edit `.env` with your target repository and three accounts. The local `.env` is ignored by Git. Commiter uses the nearest `.env` in the current directory or its parents. Relative paths are resolved from that file's directory. Settings in `.env` are authoritative, including tokens, even if your shell has different values.
 
 ```dotenv
 COMMITER_REPO=/path/to/your/local/clone
-COMMITER_GITHUB=owner/repository
+COMMITER_GITHUB=https://github.com/owner/repository.git
 
 GITHUB_ACCOUNT_1=alice
 GITHUB_TOKEN_1=your_alice_token
@@ -53,7 +62,7 @@ COMMITER_DRY_RUN=false
 COMMITER_STATE_DIR=
 ```
 
-The target must be an existing local Git working directory. Each of the three distinct accounts needs write access to the GitHub repository. Leave `COMMITER_GITHUB` blank to infer the target from the clone's `origin` remote. For fine-grained tokens, select the target repo and grant **Contents: Read and write**; changes to workflow files also require **Workflows: Read and write**. Organization approval, SSO, and branch rules still apply. See [GitHub's token documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+`COMMITER_REPO` points to the existing local clone whose changes you want to distribute. `COMMITER_GITHUB` accepts that project's GitHub URL or `owner/repository`; leave it blank to infer the target from the clone's `origin` remote. Each of the three distinct accounts needs write access to that repository. For fine-grained tokens, select the target repo and grant **Contents: Read and write**; changes to workflow files also require **Workflows: Read and write**. Organization approval, SSO, and branch rules still apply. See [GitHub's token documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
 
 After filling in `.env`, run:
 
