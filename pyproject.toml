@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "commiter-cli"
+version = "0.1.0"
+description = "Split pending Git changes into commits across three GitHub accounts."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Commiter contributors"}]
+dependencies = ["python-dotenv>=1.0,<2"]
+
+[project.scripts]
+commiter = "commiter.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
